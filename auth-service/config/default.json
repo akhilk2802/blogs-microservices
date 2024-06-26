@@ -1,0 +1,4 @@
+{
+    "name": "Auth-test",
+    "db": "mongodb://localhost/auth-service"
+}
