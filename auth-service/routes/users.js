@@ -3,6 +3,8 @@ const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
 const router = express.Router();
 const { User, validate } = require("../model/user");
+const dotenv = require("dotenv");
+dotenv.config();
 
 const secret = "auth-service";
 

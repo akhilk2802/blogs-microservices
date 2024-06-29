@@ -1,4 +1,8 @@
 const express = require("express");
+const dotenv = require("dotenv");
+
+dotenv.config();
+
 const cors = require("cors");
 
 const app = express();
@@ -10,7 +14,7 @@ require("./startup/routes")(app);
 require("./startup/db")();
 require("./startup/validation")();
 
-const port = 6000;
+const port = 3000;
 const server = app.listen(port, () =>
   console.log(`${"*".repeat(50)} Listening on PORT ${port}`)
 );
