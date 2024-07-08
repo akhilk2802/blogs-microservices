@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint .",
-    "test": "mocha"
+    "test": "mocha",
+    "build": ""
   },
   "keywords": [],
   "author": "",
@@ -25,6 +26,8 @@
     "uuid": "^10.0.0"
   },
   "devDependencies": {
+    "chai": "^5.1.1",
+    "chai-http": "^5.0.0",
     "mocha": "^10.6.0",
     "nodemon": "^3.1.4"
   }

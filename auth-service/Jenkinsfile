@@ -1,0 +1,74 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('docker-hub-credentials')
+        K8S_NODE_SSH_CREDENTIALS = 'k8s-node-ssh-credentials'
+        K8S_CLUSTER_NAME = 'mycluster.k8s.local'
+        K8S_STATE_STORE = 's3://blogs-auth-service-bucket'
+        HELM_RELEASE_NAME = 'auth-service'
+        DOCKER_IMAGE = 'akhilk280201/auth-service'
+        KUBE_CONFIG_PATH = '/home/ec2-user/.kube/config' 
+    }
+
+    stages {
+        stage('Fetch Code') {
+            steps {
+                git url: 'https://github.com/akhilk2802/blogs-microservices.git', branch: 'main'
+            }
+        }
+        stage('Install Dependencies') {
+			steps {
+				dir('auth-service') {
+					sh 'npm install'
+				}
+			}
+		}
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    dockerImage = docker.build("${DOCKER_IMAGE}:${env.BUILD_ID}", "auth-service")
+                }
+            }
+        }
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS) {
+                        dockerImage.push("${env.BUILD_ID}")
+                        dockerImage.push('latest')
+                    }
+                }
+            }
+        }
+        stage('Remove Unused Docker Image') {
+            steps {
+                sh "docker rmi ${DOCKER_IMAGE}:${env.BUILD_ID}"
+            }
+        }
+        stage('Deploy to Kubernetes with Helm') {
+            steps {
+                sshagent([K8S_NODE_SSH_CREDENTIALS]) {
+                    sh """
+                    ssh -o StrictHostKeyChecking=no ec2-user@${K8S_NODE_IP} '
+                    export KUBECONFIG=${KUBE_CONFIG_PATH} &&
+                    helm upgrade --install ${HELM_RELEASE_NAME} ./helm/auth-service --set image.repository=${DOCKER_IMAGE} --set image.tag=${env.BUILD_ID}
+                    '
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+        }
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
+}
