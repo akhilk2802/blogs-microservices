@@ -4,7 +4,7 @@
 ### This project is a practice initiative to learn the basics of DevOps concepts and tools. It involves building a monorepo-based microservice architecture, with each microservice developed using different frameworks. The auth-service microservice is implemented using NodeJS and MongoDB.
 
 ## Project Structure
-#### auth-service: A NodeJS-based microservice responsible for authentication. It uses MongoDB as the database.
+#### auth-service: A NodeJS-based microservice responsible for basic authentication. It uses MongoDB as the database.
 #### other-services: Working on it to build with different Framework
 
 
