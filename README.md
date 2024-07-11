@@ -1,14 +1,14 @@
 # Blogs Microservices Project
 
-### Overview
-#### This project is a practice initiative to learn the basics of DevOps concepts and tools. It involves building a monorepo-based microservice architecture, with each microservice developed using different frameworks. The auth-service microservice is implemented using NodeJS and MongoDB.
+## Overview
+### This project is a practice initiative to learn the basics of DevOps concepts and tools. It involves building a monorepo-based microservice architecture, with each microservice developed using different frameworks. The auth-service microservice is implemented using NodeJS and MongoDB.
 
-### Project Structure
+## Project Structure
 #### auth-service: A NodeJS-based microservice responsible for authentication. It uses MongoDB as the database.
 #### other-services: Working on it to build with different Framework
 
 
-### Prerequisites
+## Prerequisites
  - NodeJS
  - Docker
  - Kubernetes
@@ -19,7 +19,7 @@
  - Kops (Kubernetes Operations)
 
 
- #### Setting up the project for auth-service
+ ## Setting up the project for auth-service
  1. Clone the repository 
     ```
     git clone https://github.com/akhilk2802/blogs-microservices.git
@@ -60,7 +60,7 @@
     kops validate cluster --state=${K8S_STATE_STORE}
     ```
 
-#### CI/CD Pipeline with Jenkins:
+## CI/CD Pipeline with Jenkins:
 
 1. Fetch Code: Clones the repository from GitHub.
 2. Install Dependencies: Installs NodeJS dependencies for the auth-service.
