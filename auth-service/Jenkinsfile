@@ -7,10 +7,10 @@ pipeline {
         K8S_CLUSTER_NAME = 'mycluster.k8s.local'
         K8S_STATE_STORE = 's3://blogs-auth-service-bucket'
         HELM_RELEASE_NAME = 'auth-service'
-        DOCKER_IMAGE = 'mongo'
+        DOCKER_MONGO_IMAGE = 'mongo'
         DOCKER_IMAGE = 'akhilk280201/auth-service'
         KUBE_CONFIG_PATH = '/home/ec2-user/.kube/config' 
-        SONARQUBE_URL = http://3.84.211.111:8081/
+        SONARQUBE_URL = 'http://3.84.211.111:8081/'
         SONARQUBE_TOKEN = credentials('sonarqube-token')
     }
 
@@ -29,8 +29,9 @@ pipeline {
 		}
         stage('Run Tests') {
             steps {
-                sh 'npm test'
-            }
+                dir('auth-service') {
+                    sh 'npm test'
+                }
         }
         stage('SonarQube Analysis') {
             steps {
