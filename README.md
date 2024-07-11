@@ -23,7 +23,7 @@
 
 ## Architecture Diagram
 
-![Architecture Diagram](microserviceArch.jpg)
+![Architecture Diagram](microserviceArch1.jpg)
 
 ## Setting up the project for auth-service
 
