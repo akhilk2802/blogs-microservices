@@ -21,7 +21,7 @@
 
  #### Setting up the project for auth-service
  1. Clone the repository 
-  ```
+    ```
     git clone https://github.com/akhilk2802/blogs-microservices.git
     cd blogs-microservices
     ```
