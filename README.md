@@ -23,7 +23,7 @@
 
 ## Architecture Diagram
 
-    ![Architecture Diagram](ArchMicroservice.jpg)
+![Architecture Diagram](ArchMicroservice.jpg)
 
 ## Setting up the project for auth-service
 
@@ -78,3 +78,5 @@
     7. Push Docker Image: Pushes the Docker image to Docker Hub.
     8. Remove Unused Docker Image: Cleans up the Docker image locally.
     9. Deploy to Kubernetes with Helm: Deploys the auth-service to a Kubernetes cluster using Helm.
+
+[def]: ArchMicroservice.jpg
