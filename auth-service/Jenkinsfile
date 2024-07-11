@@ -7,8 +7,11 @@ pipeline {
         K8S_CLUSTER_NAME = 'mycluster.k8s.local'
         K8S_STATE_STORE = 's3://blogs-auth-service-bucket'
         HELM_RELEASE_NAME = 'auth-service'
+        DOCKER_IMAGE = 'mongo'
         DOCKER_IMAGE = 'akhilk280201/auth-service'
         KUBE_CONFIG_PATH = '/home/ec2-user/.kube/config' 
+        SONARQUBE_URL = http://3.84.211.111:8081/
+        SONARQUBE_TOKEN = credentials('sonarqube-token')
     }
 
     stages {
@@ -24,6 +27,30 @@ pipeline {
 				}
 			}
 		}
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {  
+                    sh """
+                    sonar-scanner \
+                        -Dsonar.projectKey=your-project-key \
+                        -Dsonar.sources=. \
+                        -Dsonar.host.url=${SONARQUBE_URL} \
+                        -Dsonar.login=${SONARQUBE_TOKEN}
+                    """
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                script {
+                    def qg = waitForQualityGate()
+                    if (qg.status != 'OK') {
+                        error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                    }
+                }
+            }
+        }
         stage('Build Docker Image') {
             steps {
                 script {
@@ -52,7 +79,16 @@ pipeline {
                     sh """
                     ssh -o StrictHostKeyChecking=no ec2-user@${K8S_NODE_IP} '
                     export KUBECONFIG=${KUBE_CONFIG_PATH} &&
-                    helm upgrade --install ${HELM_RELEASE_NAME} ./helm/auth-service --set image.repository=${DOCKER_IMAGE} --set image.tag=${env.BUILD_ID}
+                    helm upgrade --install ${HELM_RELEASE_NAME} ./mongodb-helm --set image.repository=${DOCKER_MONGO_IMAGE}  --set image.tag=latest
+                    '
+                    """
+                }
+
+                sshagent([K8S_NODE_SSH_CREDENTIALS]) {
+                    sh """
+                    ssh -o StrictHostKeyChecking=no ec2-user@${K8S_NODE_IP} '
+                    export KUBECONFIG=${KUBE_CONFIG_PATH} &&
+                    helm upgrade --install ${HELM_RELEASE_NAME} ./auth-service-helm --set image.repository=${DOCKER_IMAGE} --set image.tag=${env.BUILD_ID}
                     '
                     """
                 }
